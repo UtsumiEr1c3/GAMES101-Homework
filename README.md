@@ -8,3 +8,4 @@
 * 解决方案 -> 属性 -> VC++ 目录 -> 库目录 -> opencv/build/x64/vc16/lib
 * 解决方案 -> 属性 -> 链接器 -> 输入 -> 附加依赖项 -> 文件夹转到 opencv/build/x64/vc16/lib/opencv\_world4110d.lib, 粘贴这个 opencv\_world4110d.lib
 * 应用, 确定
+具体可参照[视频链接](https://www.bilibili.com/video/BV1hiA5exEhD) 感谢这位up主
