@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "Triangle.hpp"
+#include "Triangle.h"
 #include <algorithm>
-#include <eigen3/Eigen/Eigen>
+#include <Eigen/Eigen>
 using namespace Eigen;
 
 namespace rst {
