@@ -26,13 +26,13 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
     // TODO: Implement this function
     // Create the model matrix for rotating the triangle around the Z axis.
     // Then return it.
-	float angle_rad = rotation_angle * MY_PI / 180.0f;
-	Eigen::Matrix4f rotate;
-    rotate << cos(angle_rad), -sin(angle_rad), 0, 0,
-              sin(angle_rad), cos(angle_rad),  0, 0,
-              0,              0,               1, 0,
-			  0,              0,               0, 1;
-	model = rotate * model;
+
+    auto radius = rotation_angle * MY_PI / 180;
+
+	model << cos(radius), -sin(radius), 0, 0,
+			 sin(radius), cos(radius),  0, 0,
+			 0,           0,            1, 0,
+			 0,           0,            0, 1;
 
     return model;
 }
@@ -47,19 +47,17 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     // TODO: Implement this function
     // Create the projection matrix for the given parameters.
     // Then return it.
-	float t = zNear * tan(eye_fov / 2.0f * MY_PI / 180.0f);
-	float r = t * aspect_ratio;
-	Eigen::Matrix4f persp_to_ortho;
-    persp_to_ortho << zNear, 0,     0,              0,
-                      0,     zNear, 0,              0,
-                      0,     0,     zNear + zFar,   -zNear * zFar,
-					  0,     0,     1,              0;
-	Eigen::Matrix4f ortho;
-    ortho << 1 / r, 0,      0,                  0,
-             0,     1 / t,  0,                  0,
-             0,     0,      2 / (zNear - zFar), -(zNear + zFar) / (zNear - zFar),
-			 0,     0,      0,                  1;
-	projection = ortho * persp_to_ortho * projection;
+
+    float fov_rad = eye_fov * MY_PI / 180.0f;
+    float t = std::tan(fov_rad / 2.0f);
+
+    float n = zNear;
+    float f = zFar;
+
+    projection << 1 / (aspect_ratio * t), 0, 0, 0,
+        0, 1 / t, 0, 0,
+        0, 0, (n + f) / (n - f), -2 * n * f / (n - f),
+        0, 0, 1, 0; 
 
     return projection;
 }
@@ -71,7 +69,20 @@ Eigen::Matrix4f get_rotation(Vector3f axis, float angle)
 
 	// TODO: Implement this function
 
+    float rad = angle * MY_PI / 180.0f;
 
+    Eigen::Vector3f n = axis.normalized();
+
+    Eigen::Matrix3f N;
+    N << 0, -n.z(), n.y(),
+        n.z(), 0, -n.x(),
+        -n.y(), n.x(), 0;
+
+    Eigen::Matrix3f R_3x3 = std::cos(rad) * Eigen::Matrix3f::Identity() +
+        (1 - std::cos(rad)) * n * n.transpose() +
+        std::sin(rad) * N;
+
+    rotation.block<3, 3>(0, 0) = R_3x3;
 
 	return rotation;
 }
